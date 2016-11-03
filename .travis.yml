@@ -1,0 +1,55 @@
+language: python
+
+branches:
+  except:
+    - gh-pages
+
+cache:
+  directories:
+    - "${HOME}/.pip"
+
+matrix:
+  include:
+    - python: 3.6
+      env: TOXENV=py36
+    - python: 3.5
+      env: TOXENV=py35
+    - python: 3.4
+      env: TOXENV=py34
+    - python: 3.3
+      env: TOXENV=py33
+    - python: 2.7
+      env: TOXENV=py27
+    - python: pypy
+      env: TOXENV=pypy
+  allow_failures:
+    - python: 3.6
+      env: TOXENV=py36
+    - python: 3.4
+      env: TOXENV=py34
+    - python: 3.3
+      env: TOXENV=py33
+
+install:
+  - pip install tox
+
+script:
+  - tox -- --ignore=tests/integration
+  - "find ${HOME}/.pip -name log -type d | xargs -I {} rm -rf {}"
+
+after_success:
+  - pip install coveralls
+  - coveralls
+
+notifications:
+  slack: storjcommunity:TZfUO9ycY8R9UYwztWZTo0jk
+  email: false
+
+deploy:
+  provider: pypi
+  user: steenzout
+  password:
+    secure: "jLypbIDK2vwvGK8soKeUrwDgzNyObA8hw1Yajl/+FhtQ9cmwfWxZZE91rIQYlSgajfm7fbJPKF3lfy8v8tSLbAgIGhs6PBB53ZYGK0WM/oJy+TPZk54Y8yGJ875Gf4R95I5khfndILlB4hJJssutVBx02a5HSSc/UEZn+HNqfeKrs9Efhpak7X9Vw3RdPHksJ2lTDxRtT1a8G/CfIGtgta+b8ZGqDhfFBTdCiE/Aizp3b1Nxarigx9Leeo1oViLy1Yd/FhwOlHHsdjQVZive3NRAqyVGGF0eJsGiDPLvBqMayTM9eFNwArXfVqFz/VkeLUDKcHYanvxxKYXWUzy4D7OrBpZrrjnKDIIx2VxyR1wuVlKxzTcFqpKCGmE1D6dZKuC/GfBJhS1ktmOIhgXLGPhMP52bKqo+VKeuAlgXwdCfBwXsAFASF0u5n4/LC+6jMio9Lea/dQrL904Fnn0zEV+xwCzKltQLs5kFEQjndNSe14ul1yKi0M3/vHwymQ1o0rZyurIO1LF3T07bWvDD6Swa78pNq81kvuHPPfmS5jNLHGJp51C62mz3X87FqqOwQjBihZW00LWZcK4BWDGO9XDmYJOAMs1HfZhcyIfealCj9eiSaPxoxESEg49xivRHn/mKjiC2H1jtkreDvQY+tO/NQ066DVr0V3Vn+YPGmQ4="
+  on:
+    tags: true
+
